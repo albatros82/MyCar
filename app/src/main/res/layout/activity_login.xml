@@ -14,7 +14,7 @@
         android:layout_height="350dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:src="@drawable/logo_auth2"
+        android:src="@drawable/logo_auth"
 
         tools:ignore="ContentDescription"
     />
