@@ -15,7 +15,7 @@
         <activity
             android:name=".ui.Users.HomeActivity"
             android:exported="false"
-            android:label="HomeActivity"
+            android:label="@string/title_activity_home"
             android:theme="@style/Theme.MyCar.NoActionBar" />
         <activity
             android:name=".ui.Admin.AdminCategoryActivity"
