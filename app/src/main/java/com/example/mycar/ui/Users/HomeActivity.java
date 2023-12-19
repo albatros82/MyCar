@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
@@ -82,6 +83,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        View headerView = navigationView.getHeaderView(0);
+        TextView userNameTextView = headerView.findViewById(R.id.user_profile_name);
+        CircleImageView profileImageView = headerView.findViewById(R.id.user_profile_image);
+
+
+
     }
     @Override
     public void onBackPressed() {
@@ -110,6 +117,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         } else if(id == R.id.nav_categories){
 
         }  else if(id == R.id.nav_settings){
+            Intent loginIntent = new Intent(HomeActivity.this, SettingsActivity.class);
+            startActivity(loginIntent);
 
 
         } else if (id == R.id.nav_logout) {
