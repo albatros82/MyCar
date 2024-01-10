@@ -1,24 +1,33 @@
 package com.example.mycar.ui;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationManagerCompat;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mycar.Model.Users;
 import com.example.mycar.Prevalent.Prevalent;
 import com.example.mycar.R;
+import com.example.mycar.Service.Admin.AdminCapabilities;
+import com.example.mycar.Service.User.UserCapabilities;
 import com.example.mycar.ui.Admin.AdminCategoryActivity;
 import com.example.mycar.ui.Users.HomeActivity;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,19 +43,13 @@ public class LoginActivity extends AppCompatActivity
     private Button loginBtn;
     private EditText phoneInput, passInput;
     private ProgressDialog loadingBar;
-    private String parentDbName = "Users";
     private CheckBox checkBoxRememberMe;
-    private TextView AdminLink, NotAdminLink;
-
-
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
 
 
         loginBtn = (Button) findViewById(R.id.login_btn);
@@ -57,44 +60,12 @@ public class LoginActivity extends AppCompatActivity
         checkBoxRememberMe = (CheckBox)findViewById(R.id.login_checkbox);
         Paper.init(this);
 
-        AdminLink = (TextView)findViewById(R.id.admin_panel_link);
-        NotAdminLink = (TextView)findViewById(R.id.not_admin_panel_link);
-
-
-        AdminLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AdminLink.setVisibility(View.INVISIBLE);
-                NotAdminLink.setVisibility(View.VISIBLE);
-                checkBoxRememberMe.setVisibility(View.INVISIBLE);
-                loginBtn.setText("Администратор");
-                parentDbName = "Admins";
-            }
-        });
-
-        NotAdminLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AdminLink.setVisibility(View.VISIBLE);
-                NotAdminLink.setVisibility(View.INVISIBLE);
-                checkBoxRememberMe.setVisibility(View.VISIBLE);
-                loginBtn.setText("Войти");
-                parentDbName = "Users";
-
-
-            }
-        });
-
-
-
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 loginUser();
             }
         });
-
-
 
     }
 
@@ -121,9 +92,9 @@ public class LoginActivity extends AppCompatActivity
 
     private void ValidateUser(final String phone, final String pass) {
 
-        if (checkBoxRememberMe.isChecked()){
-            Paper.book().write(Prevalent.UserPhoneKey,phone);
-            Paper.book().write(Prevalent.UserPassKey,pass);
+        if (checkBoxRememberMe.isChecked()) {
+            Paper.book().write(Prevalent.UserPhoneKey, phone);
+            Paper.book().write(Prevalent.UserPassKey, pass);
         }
 
         final DatabaseReference RootRef;
@@ -132,39 +103,33 @@ public class LoginActivity extends AppCompatActivity
         RootRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.child(parentDbName).child(phone).exists())
-                {
-                    Users usersData = dataSnapshot.child(parentDbName).child(phone).getValue(Users.class);
+                if (dataSnapshot.child("Users").child(phone).exists()) {
+                    Users usersData = dataSnapshot.child("Users").child(phone).getValue(Users.class);
+                    usersData.setPhone(phone);
+                    System.out.println(usersData);
+                    Prevalent.currentOnLineUser = usersData;
 
-                    if(usersData.getPhone().equals(phone))
-                    {
-                        if(usersData.getPass().equals(pass))
-                        {
-                            if(parentDbName.equals("Users")){
-                                loadingBar.dismiss();
-                                Toast.makeText(LoginActivity.this, "Успешный вход", Toast.LENGTH_SHORT).show();
-                                Intent homeIntent = new Intent(LoginActivity.this, HomeActivity.class);
-                                startActivity(homeIntent);
+                    if (usersData.getPass().equals(pass)) {
 
-                            }
-                            else if (parentDbName.equals("Admins")) {
-
-                                loadingBar.dismiss();
-                                Toast.makeText(LoginActivity.this, "Успешный вход", Toast.LENGTH_SHORT).show();
-                                Intent homeIntent = new Intent(LoginActivity.this, AdminCategoryActivity.class);
-                                startActivity(homeIntent);
-                            }
+                        Prevalent.currentOnLineUser.setActivity(LoginActivity.this);
+                        if(usersData.getPermissions()) {
+                            Prevalent.capabilities = new AdminCapabilities(LoginActivity.this);
                         }
-                        else
-                        {
-                            loadingBar.dismiss();
-                            Toast.makeText(LoginActivity.this, "Не верный пароль", Toast.LENGTH_SHORT).show();
+                        else{
+                            Prevalent.capabilities = new UserCapabilities();
                         }
 
+                        loadingBar.dismiss();
+                        Toast.makeText(LoginActivity.this, "Успешный вход", Toast.LENGTH_SHORT).show();
+                        Intent homeIntent = new Intent(LoginActivity.this, HomeActivity.class);
+                        startActivity(homeIntent);
+
+                    } else {
+                        loadingBar.dismiss();
+                        Toast.makeText(LoginActivity.this, "Не верный пароль", Toast.LENGTH_SHORT).show();
                     }
 
-                }
-                else {
+                } else {
                     loadingBar.dismiss();
                     Toast.makeText(LoginActivity.this, "Аккаунт с номером" + phone + "не существует", Toast.LENGTH_SHORT).show();
 
@@ -172,6 +137,7 @@ public class LoginActivity extends AppCompatActivity
                     startActivity(regiserIntent);
                 }
             }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {

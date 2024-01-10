@@ -1,19 +1,45 @@
 package com.example.mycar.Model;
 
+import android.content.Context;
+
 public class Users {
-    private String name, phone, pass, image;
-    public  Users()
-    {
+    private Context activity;
 
-
-
+    public Context getActivity() {
+        return activity;
     }
 
-    public Users(String name, String phone, String pass, String image) {
+    public void setActivity(Context activity) {
+        this.activity = activity;
+    }
+
+    private String name, phone, pass, address, image;
+    private Boolean permissions;
+
+    public Boolean getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(Boolean permissions) {
+        this.permissions = permissions;
+    }
+
+    public Users() {}
+
+    public Users(String name, String pass, Boolean permissions, String address, String image) {
         this.name = name;
-        this.phone = phone;
         this.pass = pass;
+        this.address = address;
+        this.permissions = permissions;
         this.image = image;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getImage() {
@@ -45,6 +71,17 @@ public class Users {
 
     public void setPass(String pass) {
         this.pass = pass;
+    }
+
+    @Override
+    public String toString() {
+        return "Users{" +
+                "name='" + name + '\'' +
+                ", phone='" + phone + '\'' +
+                ", pass='" + pass + '\'' +
+                ", image='" + image + '\'' +
+                ", permissions=" + permissions +
+                '}';
     }
 }
 

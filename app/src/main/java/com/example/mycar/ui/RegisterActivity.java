@@ -44,25 +44,22 @@ public class RegisterActivity extends AppCompatActivity {
         phoneInput = (EditText) findViewById(R.id.register_phone_input);
         passInput = (EditText) findViewById(R.id.register_password_input);
 
-
         loadingBar = new ProgressDialog(this);
-
 
         regBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CreateAccount ();
-
+                CreateAccount(
+                        nameInput.getText().toString(),
+                        phoneInput.getText().toString(),
+                        passInput.getText().toString());
             }
         });
 
 
     }
 
-    private void CreateAccount() {
-        String name = nameInput.getText().toString();
-        String phone = phoneInput.getText().toString();
-        String pass = passInput.getText().toString();
+    private void CreateAccount(String name, String phone, String pass) {
 
         if (TextUtils.isEmpty(name)){
             Toast.makeText(this, "Введите имя", Toast.LENGTH_SHORT).show();
@@ -79,12 +76,8 @@ public class RegisterActivity extends AppCompatActivity {
             loadingBar.setCanceledOnTouchOutside(false);
             loadingBar.show();
 
-
             ValidatePhone(name, phone, pass);
-
         }
-
-
     }
 
     private void ValidatePhone(String name, String phone, String pass) {
@@ -97,7 +90,7 @@ public class RegisterActivity extends AppCompatActivity {
                 if(!(dataSnapshot.child("Users").child(phone).exists()))
                 {
                     HashMap <String, Object> userDataMap = new HashMap<>();
-                    userDataMap.put("phone", phone );
+                    userDataMap.put("permissions", false);
                     userDataMap.put("name", name );
                     userDataMap.put("pass", pass );
 
@@ -109,7 +102,6 @@ public class RegisterActivity extends AppCompatActivity {
 
                                         loadingBar.dismiss();
                                         Toast.makeText(RegisterActivity.this, "Регистрация прошла успешно.", Toast.LENGTH_SHORT).show();
-
                                         Intent loginIntent = new Intent(RegisterActivity.this, LoginActivity.class);
                                         startActivity(loginIntent);
 

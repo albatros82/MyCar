@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.example.mycar.Prevalent.Prevalent;
 import com.example.mycar.R;
 
 public class AdminCategoryActivity extends AppCompatActivity {
@@ -16,6 +17,7 @@ public class AdminCategoryActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Prevalent.currentOnLineUser.setActivity(AdminCategoryActivity.this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_category);
         init();

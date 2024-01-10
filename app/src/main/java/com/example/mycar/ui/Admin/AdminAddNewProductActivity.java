@@ -3,7 +3,6 @@ package com.example.mycar.ui.Admin;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -14,16 +13,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.example.mycar.Prevalent.Prevalent;
 import com.example.mycar.R;
-import com.example.mycar.ui.LoginActivity;
-import com.example.mycar.ui.RegisterActivity;
-import com.google.android.gms.auth.api.signin.internal.Storage;
+import com.example.mycar.ui.Users.HomeActivity;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.Firebase;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -33,7 +31,6 @@ import com.google.firebase.storage.UploadTask;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class AdminAddNewProductActivity extends AppCompatActivity {
 
@@ -53,6 +50,7 @@ public class AdminAddNewProductActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Prevalent.currentOnLineUser.setActivity(AdminAddNewProductActivity.this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_add_new_product);
 
@@ -111,8 +109,6 @@ public class AdminAddNewProductActivity extends AppCompatActivity {
         loadingBar.setCanceledOnTouchOutside(false);
         loadingBar.show();
 
-
-
         Calendar calendar = Calendar.getInstance();
 
         SimpleDateFormat currentDate = new SimpleDateFormat("ddMMyyyy");
@@ -123,10 +119,17 @@ public class AdminAddNewProductActivity extends AppCompatActivity {
 
         productRandomKey = saveCurrentDate + saveCurrentTime;
 
-        StorageReference filePath = ProductImageRef.child(ImageUri.getLastPathSegment() + productRandomKey + ".jpg");
+        // Получите ссылку на хранилище Firebase
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
 
-        final UploadTask uploadTask = filePath.putFile(ImageUri);
+        // Создайте ссылку на место, где будет сохранено фото в хранилище
+        StorageReference photoRef = storageRef.child("Product Images/" + productRandomKey);
 
+        // Загрузите фото в хранилище
+        final UploadTask uploadTask = photoRef.putFile(ImageUri);
+
+        // Сохранить путь к файлу в базе данных Firebase Realtime Database
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
@@ -135,53 +138,30 @@ public class AdminAddNewProductActivity extends AppCompatActivity {
                 loadingBar.dismiss();
 
             }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+        }).addOnSuccessListener(taskSnapshot -> {
+            // Получите URL фото
+            Task<Uri> downloadUrlTask = taskSnapshot.getStorage().getDownloadUrl();
 
-                Toast.makeText(AdminAddNewProductActivity.this, "Изображение успешно загружено", Toast.LENGTH_SHORT).show();
+            downloadUrlTask.addOnSuccessListener(downloadUri -> {
+                String photoUrl = downloadUri.toString();
+                downloadImageUrl = photoUrl;
 
-                Task<Uri> uriTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                    @Override
-                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                        if (!task.isSuccessful()){
-                            throw  task.getException();
-                        }
-                        downloadImageUrl = filePath.getDownloadUrl().toString();
-                        return filePath.getDownloadUrl();
-                    }
-                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Uri> task) {
-                        if (task.isSuccessful()){
-                            Toast.makeText(AdminAddNewProductActivity.this, "Фото сохранено", Toast.LENGTH_SHORT).show();
-
-
-                            SaveProductInfoToDataBase();
-
-
-                        }
-                    }
-                });
-            }
+                SaveProductInfoToDataBase();
+            });
         });
-
-
     }
 
     private void SaveProductInfoToDataBase() {
 
         HashMap<String, Object> productMap = new HashMap<>();
 
-
-        productMap.put("pid", productRandomKey);
         productMap.put("date", saveCurrentDate);
         productMap.put("time", saveCurrentTime);
         productMap.put("description", Description);
-        productMap.put("image", downloadImageUrl);
+        productMap.put("imageUrl", downloadImageUrl);
         productMap.put("category", categoryName);
-        productMap.put("price", Price);
-        productMap.put("pname", Pname);
+        productMap.put("productPrice", Price);
+        productMap.put("productName", Pname);
 
         ProductsRef.child(productRandomKey).updateChildren(productMap)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -192,9 +172,7 @@ public class AdminAddNewProductActivity extends AppCompatActivity {
                 loadingBar.dismiss();
                 Toast.makeText(AdminAddNewProductActivity.this, "Товар добавлен", Toast.LENGTH_SHORT).show();
 
-                Intent loginIntent = new Intent(AdminAddNewProductActivity.this, AdminCategoryActivity.class);
-                startActivity(loginIntent);
-
+                finish();
 
             }
             else {
@@ -203,7 +181,6 @@ public class AdminAddNewProductActivity extends AppCompatActivity {
                 loadingBar.dismiss();
 
             }
-
 
             }
         });
@@ -239,8 +216,6 @@ public class AdminAddNewProductActivity extends AppCompatActivity {
         ProductImageRef = FirebaseStorage.getInstance().getReference().child("Product Images");
         ProductsRef = FirebaseDatabase.getInstance().getReference().child("Products");
         loadingBar = new ProgressDialog(this);
-
-
     }
 
 }

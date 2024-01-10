@@ -10,14 +10,14 @@
 
     <ImageView
         android:id="@+id/app_logo_auth"
-        android:layout_width="350dp"
-        android:layout_height="350dp"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:src="@drawable/logo_auth"
+        android:src="@drawable/logo_2"
 
         tools:ignore="ContentDescription"
-    />
+        />
 
     <EditText
         android:id="@+id/login_phone_input"
@@ -26,7 +26,7 @@
         android:layout_below="@+id/app_logo_auth"
         android:background="@drawable/input_design"
         android:padding="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:layout_marginRight="25dp"
         android:layout_marginLeft="25dp"
         android:hint="Номер телефона"
@@ -36,7 +36,7 @@
         android:textSize="20sp"
         android:textStyle="bold"
         tools:ignore="Autofill,HardcodedText,TextFields"
-    />
+        />
 
     <EditText
         android:id="@+id/login_password_input"
@@ -46,7 +46,7 @@
         android:background="@drawable/input_design"
         android:padding="20dp"
 
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_marginRight="25dp"
         android:layout_marginLeft="25dp"
         android:hint="Пароль"
@@ -57,14 +57,14 @@
         android:textStyle="bold"
 
         tools:ignore="Autofill,HardcodedText,TextFields"
-    />
+        />
 
     <LinearLayout
         android:id="@+id/linear_check"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
         android:layout_below="@+id/login_password_input">
 
 
@@ -83,69 +83,26 @@
             android:layout_marginStart="25dp"
             tools:ignore="HardcodedText" />
 
-        <TextView
-            android:id="@+id/forget_password_link"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Забыли пароль"
-            android:textColor="#1874E0"
-            android:textSize="16sp"
-            android:layout_marginStart="55dp"
-            tools:ignore="HardcodedText" />
     </LinearLayout>
-
-
-    <TextView
-        android:id="@+id/admin_panel_link"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linear_check"
-        android:layout_marginTop="20dp"
-
-        android:text="Администратор"
-        android:textColor="#1874E0"
-        android:textSize="18sp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="25dp"
-        tools:ignore="HardcodedText" />
-
-    <TextView
-        android:id="@+id/not_admin_panel_link"
-
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linear_check"
-        android:layout_marginTop="20dp"
-
-        android:text="Клиент"
-        android:textColor="#1874E0"
-        android:textSize="18sp"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="25dp"
-        android:visibility="invisible"
-        tools:ignore="HardcodedText"
-        />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/login_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/admin_panel_link"
+        android:layout_below="@+id/linear_check"
 
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="25dp"
         android:layout_marginRight="20dp"
 
-        android:background="@drawable/btn_blue"
+        android:background="@drawable/btn_yel"
         android:padding="10dp"
         android:text="Войти"
         android:textAllCaps="false"
-        android:textColor="@color/white"
+        android:textColor="#052833"
         android:textSize="26sp"
 
         tools:ignore="HardcodedText" />
-
-
 
 
 </RelativeLayout>

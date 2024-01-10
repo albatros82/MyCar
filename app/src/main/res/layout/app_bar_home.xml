@@ -8,15 +8,18 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:theme="@style/Theme.MyCar.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/Theme.MyCar.PopupOverlay" />
+            android:background="#ff9913"
+            app:popupTheme="@style/Theme.MyCar.PopupOverlay"
+            app:title="Категория"
+            app:titleMarginStart="60dp"
+            app:titleTextColor="@color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -29,7 +32,9 @@
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginBottom="16dp"
-        app:srcCompat="@drawable/nav_cart"
+        app:srcCompat="@drawable/orders"
+
+        app:backgroundTint="#ff9913"
         />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
