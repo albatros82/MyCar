@@ -131,7 +131,7 @@ public class LoginActivity extends AppCompatActivity
 
                 } else {
                     loadingBar.dismiss();
-                    Toast.makeText(LoginActivity.this, "Аккаунт с номером" + phone + "не существует", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Аккаунт с номером " + phone + " не существует", Toast.LENGTH_SHORT).show();
 
                     Intent regiserIntent = new Intent(LoginActivity.this, RegisterActivity.class);
                     startActivity(regiserIntent);

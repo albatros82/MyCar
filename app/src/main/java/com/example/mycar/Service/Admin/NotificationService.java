@@ -37,9 +37,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.RemoteMessage;
-import com.google.firebase.messaging.RemoteMessageCreator;
+//import com.google.firebase.messaging.FirebaseMessaging;
+//import com.google.firebase.messaging.RemoteMessage;
+//import com.google.firebase.messaging.RemoteMessageCreator;
 
 import java.util.UUID;
 
@@ -67,9 +67,9 @@ public class NotificationService extends Service {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {/*
                 if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {*/
-                    int curNumber = snapshot.getValue(Integer.class);
-                    if (curNumber > 0)
-                        createNotification(curNumber);
+                int curNumber = snapshot.getValue(Integer.class);
+                if (curNumber > 0)
+                    createNotification(curNumber);
                 // }
             }
 
